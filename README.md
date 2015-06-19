@@ -2,8 +2,8 @@
 
 Build::Environment provides a nested hash data structure which can contain lambdas for evaluating environments for generating appropriate build environments.
 
-[![Build Status](https://secure.travis-ci.org/ioquatix/build-environment.png)](http://travis-ci.org/ioquatix/build-environment)
-[![Code Climate](https://codeclimate.com/github/ioquatix/build-environment.png)](https://codeclimate.com/github/ioquatix/build-environment)
+[![Build Status](https://secure.travis-ci.org/ioquatix/build-environment.svg)](http://travis-ci.org/ioquatix/build-environment)
+[![Code Climate](https://codeclimate.com/github/ioquatix/build-environment.svg)](https://codeclimate.com/github/ioquatix/build-environment)
 [![Coverage Status](https://coveralls.io/repos/ioquatix/build-environment/badge.svg)](https://coveralls.io/r/ioquatix/build-environment)
 
 ## Installation
