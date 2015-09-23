@@ -31,8 +31,29 @@ module Build
 				end
 			end
 			
+			def self.valid_for_export(value)
+				case value
+				when Array
+					true
+				when Symbol
+					false
+				when Proc
+					false
+				when Default
+					false
+				when Replace
+					false
+				when Define
+					false
+				else
+					true
+				end
+			end
+			
 			def self.convert_to_shell(environment)
-				Hash[environment.values.map{|key, value| [
+				values = environment.values.select{|key, value| valid_for_export(value)}
+				
+				Hash[values.map{|key, value| [
 					key.to_s.upcase,
 					shell_escape(value)
 				]}]
@@ -42,6 +63,11 @@ module Build
 		# Construct an environment from a given system environment:
 		def self.system_environment(env = ENV)
 			self.new(Hash[env.map{|key, value| [key.downcase.to_sym, value]}])
+		end
+		
+		# Make a hash appropriate for a process environment
+		def export
+			System::convert_to_shell(self)
 		end
 	end
 end

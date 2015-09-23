@@ -18,53 +18,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module Build
-	# This is the basic environment data structure which is essentially a linked list of hashes. It is primarily used for organising build configurations across a wide range of different sub-systems, e.g. platform configuration, target configuration, local project configuration, etc.
-	class Environment
-		def initialize(parent = nil, values = nil, &block)
-			@values = (values || {}).to_h
-			@parent = parent
-			
-			if block_given?
-				Constructor.new(self).instance_exec(&block)
+require 'build/environment'
+require 'build/environment/system'
+
+module Build::Environment::SystemSpec
+	class Rule
+		def initialize(process_name, type)
+			@process_name = process_name
+			@type = type
+		end
+		
+		attr :process_name
+		attr :type
+	end
+	
+	describe Build::Environment do
+		it "should not export rule" do
+			a = Build::Environment.new do
+				cflags "-fPIC"
+				
+				define Rule, "compile.foo" do
+				end
 			end
-		end
-		
-		def self.hash(**values)
-			self.new(nil, values)
-		end
-		
-		attr :values
-		attr :parent
-		
-		def lookup(name)
-			if @values.include? name
-				self
-			elsif @parent
-				@parent.lookup(name)
-			end
-		end
-		
-		def include?(key)
-			lookup(key) != nil
-		end
-		
-		def size
-			@values.size + (@parent ? @parent.size : 0)
-		end
-		
-		def [] (key)
-			environment = lookup(key)
 			
-			environment ? environment.values[key] : nil
-		end
-		
-		def []= (key, value)
-			@values[key] = value
-		end
-		
-		def to_s
-			"<#{self.class} #{self.values}>"
+			expect(a).to include(:cflags)
+			expect(a).to include('compile.foo')
+			
+			exported = a.export
+			
+			expect(exported.size).to be == 1
+			expect(exported).to_not include('COMPILE.FOO')
 		end
 	end
 end
