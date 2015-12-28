@@ -55,10 +55,7 @@ module Build
 			@parent.inspect(output, indent + "\t") if @parent
 		end
 		
-		# This should be stable within environments that produce the same results.
-		def checksum
-			digester = Digest::MD5.new
-			
+		def checksum(digester: Digest::MD5.new)
 			checksum_recursively(digester)
 			
 			return digester.hexdigest
@@ -66,10 +63,14 @@ module Build
 		
 		protected
 		
+		def sorted_keys
+			@values.keys.sort
+		end
+		
 		def checksum_recursively(digester)
-			@values.each do |(key, value)|
+			sorted_keys.each do |key|
 				digester.update(key.to_s)
-				digester.update(value.to_s)
+				digester.update(@values[key].to_s)
 			end
 			
 			@parent.checksum_recursively(digester) if @parent
