@@ -49,5 +49,14 @@ module Build::Environment::SystemSpec
 			expect(exported.size).to be == 1
 			expect(exported).to_not include('COMPILE.FOO')
 		end
+		
+		it "shold load current ENV" do
+			ENV['TEST_KEY'] = 'test-value'
+			
+			e = Build::Environment::system_environment
+			
+			expect(e.values).to include(:path, :user, :home)
+			expect(e[:test_key]).to be == 'test-value'
+		end
 	end
 end
