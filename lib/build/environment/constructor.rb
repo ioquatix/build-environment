@@ -99,10 +99,7 @@ module Build
 		end
 		
 		def merge(&block)
-			self.class.combine(
-				self,
-				self.class.new(&block)
-			)
+			self.class.new(self, &block)
 		end
 		
 		# Convert the hierarchy of environments to an array where the parent comes before the child.
