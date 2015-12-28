@@ -70,8 +70,16 @@ module Build
 			@values[key] = value
 		end
 		
+		def inspect
+			"#<#{self.class} #{self.to_s}>"
+		end
+		
 		def to_s
-			"<#{self.class} #{self.values}>"
+			if @parent
+				"#{@parent}->#{@values}"
+			else
+				@values.to_s
+			end
 		end
 	end
 end
