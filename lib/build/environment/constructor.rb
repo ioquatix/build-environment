@@ -23,17 +23,13 @@ module Build
 		Default = Struct.new(:value)
 		Replace = Struct.new(:value)
 		
-		class Define
+		class Define < Struct.new(:klass, :block)
 			def initialize(klass, &block)
-				@klass = klass
-				@block = block
+				super klass, block
 			end
 			
-			attr :klass
-			attr :block
-			
 			def to_s
-				"<#{@klass.name} #{@block.source_location.join(':')}>"
+				"#<#{@klass.name} #{@block.source_location.join(':')}>"
 			end
 		end
 		
