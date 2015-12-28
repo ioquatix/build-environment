@@ -30,6 +30,13 @@ module Build
 			end
 		end
 		
+		def freeze
+			@values.freeze
+			@parent.freeze
+			
+			super
+		end
+		
 		def self.hash(**values)
 			self.new(nil, values)
 		end
