@@ -28,7 +28,7 @@ module Build::ChecksumSpec
 			expect(e.checksum).to be == "0e29e95023819e0ecd2850edece5851a"
 		end
 		
-		it "should compute same checksum" do
+		it "should compute same checksum when keys are in different order" do
 			e = Build::Environment.hash(b: 20, a: 10)
 			
 			expect(e.checksum).to be == "0e29e95023819e0ecd2850edece5851a"
