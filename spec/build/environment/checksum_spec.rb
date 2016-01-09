@@ -1,4 +1,4 @@
-# Copyright, 2012, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2016, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,12 @@ module Build::ChecksumSpec
 			e = Build::Environment.hash(b: 20, a: 10)
 			
 			expect(e.checksum).to be == "0e29e95023819e0ecd2850edece5851a"
+		end
+		
+		it "should handle both string and symbol keys" do
+			e = Build::Environment.hash(:a => 20, "b" => 10)
+			
+			expect(e.checksum).to be == "613a92db2cc6a94709ce3174f01c29fe"
 		end
 	end
 end

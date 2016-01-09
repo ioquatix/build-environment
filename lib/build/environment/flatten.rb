@@ -56,7 +56,7 @@ module Build
 		protected
 		
 		def sorted_keys
-			@values.keys.sort
+			@values.keys.sort_by(&:to_s)
 		end
 		
 		def checksum_recursively(digester)
