@@ -47,14 +47,6 @@ module Build
 			@values.select{|name,value| Define === value}
 		end
 		
-		def inspect(output = $stdout, indent = "")
-			@values.each do |(key, value)|
-				output.puts "#{indent}#{key}: #{value}"
-			end
-			
-			@parent.inspect(output, indent + "\t") if @parent
-		end
-		
 		def checksum(digester: Digest::MD5.new)
 			checksum_recursively(digester)
 			

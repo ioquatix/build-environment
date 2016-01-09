@@ -70,16 +70,8 @@ module Build
 			@values[key] = value
 		end
 		
-		def inspect
-			"#<#{self.class} #{self.to_s}>"
-		end
-		
 		def to_s
-			if @parent
-				"#{@parent}->#{@values}"
-			else
-				@values.to_s
-			end
+			self.to_hash.to_s
 		end
 	end
 end
