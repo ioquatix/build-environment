@@ -37,7 +37,7 @@ module Build
 			super
 		end
 		
-		def self.hash(**values)
+		def self.hash(values = {})
 			self.new(nil, values)
 		end
 		
