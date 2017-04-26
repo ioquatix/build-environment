@@ -60,13 +60,13 @@ module Build
 			@values.size + (@parent ? @parent.size : 0)
 		end
 		
-		def [] (key)
+		def [](key)
 			environment = lookup(key)
 			
 			environment ? environment.values[key] : nil
 		end
 		
-		def []= (key, value)
+		def []=(key, value)
 			@values[key] = value
 		end
 		
