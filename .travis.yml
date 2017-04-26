@@ -1,5 +1,15 @@
 language: ruby
+sudo: false
+dist: trusty
+cache: bundler
 rvm:
-  - "2.0"
-  - "2.1"
-env: COVERAGE=true
+  - 2.1.8
+  - 2.2.4
+  - 2.3.0
+  - 2.4.0
+  - ruby-head
+  - jruby-head
+matrix:
+  allow_failures:
+    - rvm: "ruby-head"
+    - rvm: "jruby-head"
