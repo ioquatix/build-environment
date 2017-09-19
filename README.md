@@ -10,28 +10,30 @@ Build::Environment provides a nested hash data structure which can contain lambd
 
 Add this line to your application's Gemfile:
 
-		gem 'build-environment'
+	gem 'build-environment'
 
 And then execute:
 
-		$ bundle
+	$ bundle
 
 Or install it yourself as:
 
-		$ gem install build-environment
+	$ gem install build-environment
 
 ## Usage
 
 A build environment in essence is a key-value storage, but it maintains a linked list so that lookups can be propagated towards the root. This allows a parent to provide, say, defaults, while the child can override these. The envirionment can contain strings, arrays and lambdas, which are evaluated when converting the environment into a hash.
 
-	a = Build::Environment.new
-	a[:cflags] = ["-std=c++11"]
+```ruby
+a = Build::Environment.new
+a[:cflags] = ["-std=c++11"]
 
-	b = Build::Environment.new(a, {})
-	b[:cflags] = ["-stdlib=libc++"]
-	b[:rcflags] = lambda {cflags }
+b = Build::Environment.new(a, {})
+b[:cflags] = ["-stdlib=libc++"]
+b[:rcflags] = lambda {cflags }
 
-  b.flatten
+b.flatten
+```
 
 ### Key Logic
 
