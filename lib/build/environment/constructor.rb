@@ -29,7 +29,7 @@ module Build
 			end
 			
 			def to_s
-				"#<#{@klass} #{@block ? @block.source_location.join(':') : 'unknown'}>"
+				"#<#{klass} #{block ? block.source_location.join(':') : 'unknown'}>"
 			end
 		end
 		
