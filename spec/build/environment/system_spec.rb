@@ -21,42 +21,32 @@
 require 'build/environment'
 require 'build/environment/system'
 
-module Build::Environment::SystemSpec
-	class Rule
-		def initialize(process_name, type)
-			@process_name = process_name
-			@type = type
+require_relative 'rule'
+
+describe Build::Environment do
+	it "should not export rule" do
+		a = Build::Environment.new do
+			cflags "-fPIC"
+			
+			define Rule, "compile.foo" do
+			end
 		end
 		
-		attr :process_name
-		attr :type
+		expect(a).to include(:cflags)
+		expect(a).to include('compile.foo')
+		
+		exported = a.export
+		
+		expect(exported.size).to be == 1
+		expect(exported).to_not include('COMPILE.FOO')
 	end
 	
-	describe Build::Environment do
-		it "should not export rule" do
-			a = Build::Environment.new do
-				cflags "-fPIC"
-				
-				define Rule, "compile.foo" do
-				end
-			end
-			
-			expect(a).to include(:cflags)
-			expect(a).to include('compile.foo')
-			
-			exported = a.export
-			
-			expect(exported.size).to be == 1
-			expect(exported).to_not include('COMPILE.FOO')
-		end
+	it "shold load current ENV" do
+		ENV['TEST_KEY'] = 'test-value'
 		
-		it "shold load current ENV" do
-			ENV['TEST_KEY'] = 'test-value'
-			
-			e = Build::Environment::system_environment
-			
-			expect(e.values).to include(:path, :user, :home)
-			expect(e[:test_key]).to be == 'test-value'
-		end
+		e = Build::Environment::system_environment
+		
+		expect(e.values).to include(:path, :user, :home)
+		expect(e[:test_key]).to be == 'test-value'
 	end
 end

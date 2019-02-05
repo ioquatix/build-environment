@@ -22,35 +22,33 @@
 
 require 'build/environment'
 
-module Build::Environment::FreezeSpec
-	describe "Build::Environment#freeze" do
-		it "should not be frozen by default" do
-			a = Build::Environment.new
-			b = a.merge
-			
-			expect(a.frozen?).to be_falsey
-			expect(b.frozen?).to be_falsey
-			expect(b.parent).to be a
-		end
+RSpec.describe "Build::Environment#freeze" do
+	it "should not be frozen by default" do
+		a = Build::Environment.new
+		b = a.merge
 		
-		it "should freeze an environment and it's parent" do
-			a = Build::Environment.new
-			b = a.merge
-			
-			b.freeze
-			
-			expect(a.frozen?).to be_truthy
-			expect(b.frozen?).to be_truthy
-		end
+		expect(a.frozen?).to be_falsey
+		expect(b.frozen?).to be_falsey
+		expect(b.parent).to be a
+	end
+	
+	it "should freeze an environment and it's parent" do
+		a = Build::Environment.new
+		b = a.merge
 		
-		it "should only be partially frozen" do
-			a = Build::Environment.new
-			b = a.merge
-			
-			a.freeze
-			
-			expect(a.frozen?).to be_truthy
-			expect(b.frozen?).to be_falsey
-		end
+		b.freeze
+		
+		expect(a.frozen?).to be_truthy
+		expect(b.frozen?).to be_truthy
+	end
+	
+	it "should only be partially frozen" do
+		a = Build::Environment.new
+		b = a.merge
+		
+		a.freeze
+		
+		expect(a.frozen?).to be_truthy
+		expect(b.frozen?).to be_falsey
 	end
 end

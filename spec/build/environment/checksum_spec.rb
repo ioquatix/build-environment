@@ -20,24 +20,22 @@
 
 require 'build/environment'
 
-module Build::ChecksumSpec
-	describe "Build::Environment#checksum" do
-		it "should compute a checksum" do
-			e = Build::Environment.hash(a: 10, b: 20)
-			
-			expect(e.checksum).to be == "0e29e95023819e0ecd2850edece5851a"
-		end
+RSpec.describe "Build::Environment#checksum" do
+	it "should compute a checksum" do
+		e = Build::Environment.hash(a: 10, b: 20)
 		
-		it "should compute same checksum when keys are in different order" do
-			e = Build::Environment.hash(b: 20, a: 10)
-			
-			expect(e.checksum).to be == "0e29e95023819e0ecd2850edece5851a"
-		end
+		expect(e.checksum).to be == "0e29e95023819e0ecd2850edece5851a"
+	end
+	
+	it "should compute same checksum when keys are in different order" do
+		e = Build::Environment.hash(b: 20, a: 10)
 		
-		it "should handle both string and symbol keys" do
-			e = Build::Environment.hash(:a => 20, "b" => 10)
-			
-			expect(e.checksum).to be == "613a92db2cc6a94709ce3174f01c29fe"
-		end
+		expect(e.checksum).to be == "0e29e95023819e0ecd2850edece5851a"
+	end
+	
+	it "should handle both string and symbol keys" do
+		e = Build::Environment.hash(:a => 20, "b" => 10)
+		
+		expect(e.checksum).to be == "613a92db2cc6a94709ce3174f01c29fe"
 	end
 end

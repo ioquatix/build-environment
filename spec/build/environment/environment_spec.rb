@@ -20,72 +20,70 @@
 
 require 'build/environment'
 
-module Build::EnvironmentSpec
-	describe Build::Environment do
-		it "should chain environments together" do
-			a = Build::Environment.new
-			a[:cflags] = ["-std=c++11"]
-			
-			b = Build::Environment.new(a, {})
-			b[:cflags] = ["-stdlib=libc++"]
-			b[:rcflags] = lambda {cflags.reverse}
-			
-			expect(b.flatten.to_hash).to be == {:cflags => ["-std=c++11", "-stdlib=libc++"], :rcflags => ["-stdlib=libc++", "-std=c++11"]}
+RSpec.describe Build::Environment do
+	it "should chain environments together" do
+		a = Build::Environment.new
+		a[:cflags] = ["-std=c++11"]
+		
+		b = Build::Environment.new(a, {})
+		b[:cflags] = ["-stdlib=libc++"]
+		b[:rcflags] = lambda {cflags.reverse}
+		
+		expect(b.flatten.to_hash).to be == {:cflags => ["-std=c++11", "-stdlib=libc++"], :rcflags => ["-stdlib=libc++", "-std=c++11"]}
+	end
+	
+	it "should resolve nested lambda" do
+		a = Build::Environment.new do
+			sdk "bob-2.6"
+			cflags [->{"-sdk=#{sdk}"}]
 		end
 		
-		it "should resolve nested lambda" do
-			a = Build::Environment.new do
-				sdk "bob-2.6"
-				cflags [->{"-sdk=#{sdk}"}]
-			end
-			
-			b = Build::Environment.new(a) do
-				sdk "bob-2.8"
-			end
-			
-			c = Build::Environment.new(b) do
-				cflags ["-pipe"]
-			end
-			
-			expect(b.flatten.to_hash.keys.sort).to be == [:cflags, :sdk]
-			
-			expect(Build::Environment::System::convert_to_shell(b.flatten)).to be == {
-				'SDK' => "bob-2.8",
-				'CFLAGS' => "-sdk=bob-2.8"
-			}
-			
-			expect(c.flatten[:cflags]).to be == %W{-sdk=bob-2.8 -pipe}
+		b = Build::Environment.new(a) do
+			sdk "bob-2.8"
 		end
 		
-		it "should combine environments" do
-			a = Build::Environment.new(nil, {:name => 'a'})
-			b = Build::Environment.new(a, {:name => 'b'})
-			c = Build::Environment.new(nil, {:name => 'c'})
-			d = Build::Environment.new(c, {:name => 'd'})
-			
-			top = Build::Environment.combine(b, d)
-			
-			expect(top.values).to be == d.values
-			expect(top.parent.values).to be == c.values
-			expect(top.parent.parent.values).to be == b.values
-			expect(top.parent.parent.parent.values).to be == a.values
+		c = Build::Environment.new(b) do
+			cflags ["-pipe"]
 		end
 		
-		it "should combine defaults" do
-			local = Build::Environment.new do
-				architectures ["-m64"]
-			end
+		expect(b.flatten.to_hash.keys.sort).to be == [:cflags, :sdk]
 		
-			platform = Build::Environment.new do
-				default architectures ["-arch", "i386"]
-			end
+		expect(Build::Environment::System::convert_to_shell(b.flatten)).to be == {
+			'SDK' => "bob-2.8",
+			'CFLAGS' => "-sdk=bob-2.8"
+		}
 		
-			combined = Build::Environment.combine(
-				platform,
-				local
-			)
+		expect(c.flatten[:cflags]).to be == %W{-sdk=bob-2.8 -pipe}
+	end
+	
+	it "should combine environments" do
+		a = Build::Environment.new(nil, {:name => 'a'})
+		b = Build::Environment.new(a, {:name => 'b'})
+		c = Build::Environment.new(nil, {:name => 'c'})
+		d = Build::Environment.new(c, {:name => 'd'})
 		
-			expect(combined[:architectures]).to be == ["-m64"]
+		top = Build::Environment.combine(b, d)
+		
+		expect(top.values).to be == d.values
+		expect(top.parent.values).to be == c.values
+		expect(top.parent.parent.values).to be == b.values
+		expect(top.parent.parent.parent.values).to be == a.values
+	end
+	
+	it "should combine defaults" do
+		local = Build::Environment.new do
+			architectures ["-m64"]
 		end
+	
+		platform = Build::Environment.new do
+			default architectures ["-arch", "i386"]
+		end
+	
+		combined = Build::Environment.combine(
+			platform,
+			local
+		)
+	
+		expect(combined[:architectures]).to be == ["-m64"]
 	end
 end
