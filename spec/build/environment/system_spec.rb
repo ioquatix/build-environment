@@ -23,7 +23,7 @@ require 'build/environment/system'
 
 require_relative 'rule'
 
-describe Build::Environment do
+RSpec.describe Build::Environment do
 	it "should not export rule" do
 		a = Build::Environment.new do
 			cflags "-fPIC"
