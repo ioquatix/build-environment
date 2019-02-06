@@ -25,9 +25,15 @@ module Build
 			@values = (values || {}).to_h
 			@parent = parent
 			
+			@constructor = nil
+			
 			if block_given?
-				Constructor.new(self).instance_exec(&block)
+				self.constructor.instance_exec(&block)
 			end
+		end
+		
+		def constructor
+			@constructor ||= Constructor.new(self)
 		end
 		
 		def freeze
