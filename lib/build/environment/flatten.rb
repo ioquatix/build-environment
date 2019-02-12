@@ -30,7 +30,7 @@ module Build
 			hash = {}
 			
 			# Flatten this chain of environments:
-			flatten_to_hash(hash)
+			flatten_to_hash(hash, &block)
 			
 			# Evaluate all items to their respective object value:
 			evaluator = Evaluator.new(hash)
@@ -74,31 +74,37 @@ module Build
 			@parent.checksum_recursively(digester) if @parent
 		end
 		
+		def update_hash(hash)
+			@values.each do |key, value|
+				previous = hash[key]
+				
+				if Replace === value
+					# Replace the parent value
+					hash[key] = value
+				elsif Default === value
+					# Update the parent value if not defined.
+					hash[key] = previous || value
+				elsif Array === previous
+					# Merge with the parent value
+					hash[key] = previous + Array(value)
+				else
+					hash[key] = value
+				end
+			end
+			
+			return self
+		end
+		
 		# We fold in the ancestors one at a time from oldest to youngest.
 		def flatten_to_hash(hash, &block)
+			if parent = @parent
+				parent = parent.flatten_to_hash(hash, &block)
+			end
+			
 			if @update
-				self.dup.update!(&block).flatten_to_hash(hash)
+				self.dup(parent: parent).update!(&block).update_hash(hash)
 			else
-				if parent = @parent
-					parent.flatten_to_hash(hash)
-				end
-				
-				@values.each do |key, value|
-					previous = hash[key]
-					
-					if Replace === value
-						# Replace the parent value
-						hash[key] = value
-					elsif Default === value
-						# Update the parent value if not defined.
-						hash[key] = previous || value
-					elsif Array === previous
-						# Merge with the parent value
-						hash[key] = previous + Array(value)
-					else
-						hash[key] = value
-					end
-				end
+				self.update_hash(hash)
 			end
 		end
 	end
