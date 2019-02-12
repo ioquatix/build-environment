@@ -21,6 +21,19 @@
 require 'build/environment'
 
 RSpec.describe Build::Environment do
+	context '#to_s' do
+		it "should generate empty string" do
+			expect(subject.to_s).to be == "#<Build::Environment {}>"
+		end
+		
+		it "should show update proc" do
+			environment = Build::Environment.new do
+			end
+			
+			expect(environment.to_s).to be =~ /environment_spec.rb/
+		end
+	end
+	
 	it "should chain environments together" do
 		a = Build::Environment.new
 		a[:cflags] = ["-std=c++11"]

@@ -104,7 +104,15 @@ module Build
 		end
 		
 		def to_s
-			self.to_hash.to_s
+			buffer = String.new("\#<#{self.class} ")
+			
+			if @update
+				buffer << @update.source_location.join(':') << ' '
+			end
+			
+			buffer << @values.to_s << '>'
+			
+			return buffer
 		end
 	end
 end
