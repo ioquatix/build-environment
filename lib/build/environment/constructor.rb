@@ -44,14 +44,18 @@ module Build
 				else
 					@environment[name] = value
 				end
-		
+				
 				name
 			end
 	
 			def [] key
 				@environment[key]
 			end
-	
+			
+			def parent
+				@environment.parent
+			end
+			
 			def default(name)
 				@environment[name] = Default.new(@environment[name])
 				
@@ -74,6 +78,17 @@ module Build
 				@environment[name] = Define.new(klass, &block)
 				
 				return name
+			end
+			
+			def update(&block)
+				if update = @environment.update
+					block = proc do |*args|
+						update.call(*args)
+						block.call(*args)
+					end
+				end
+				
+				@environment.update = block
 			end
 		end
 		

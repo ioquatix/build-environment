@@ -26,7 +26,7 @@ module Build
 			@values
 		end
 		
-		def to_hash
+		def to_hash(&block)
 			hash = {}
 			
 			# Flatten this chain of environments:
@@ -39,8 +39,8 @@ module Build
 			Hash[hash.map{|key, value| [key, evaluator.object_value(value)]}]
 		end
 		
-		def flatten
-			self.class.new(nil, self.to_hash)
+		def flatten(&block)
+			self.class.new(nil, self.to_hash(&block))
 		end
 		
 		def defined
@@ -75,25 +75,29 @@ module Build
 		end
 		
 		# We fold in the ancestors one at a time from oldest to youngest.
-		def flatten_to_hash(hash)
-			if @parent
-				@parent.flatten_to_hash(hash)
-			end
-
-			@values.each do |key, value|
-				previous = hash[key]
-
-				if Replace === value
-					# Replace the parent value
-					hash[key] = value
-				elsif Array === previous
-					# Merge with the parent value
-					hash[key] = previous + Array(value)
-				elsif Default === value
-					# Update the parent value if not defined.
-					hash[key] = previous || value
-				else
-					hash[key] = value
+		def flatten_to_hash(hash, &block)
+			if @update
+				self.update!(&block).flatten_to_hash(hash)
+			else
+				if parent = @parent
+					parent.flatten_to_hash(hash)
+				end
+				
+				@values.each do |key, value|
+					previous = hash[key]
+					
+					if Replace === value
+						# Replace the parent value
+						hash[key] = value
+					elsif Array === previous
+						# Merge with the parent value
+						hash[key] = previous + Array(value)
+					elsif Default === value
+						# Update the parent value if not defined.
+						hash[key] = previous || value
+					else
+						hash[key] = value
+					end
 				end
 			end
 		end

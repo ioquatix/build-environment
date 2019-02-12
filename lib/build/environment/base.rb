@@ -21,9 +21,10 @@
 module Build
 	# This is the basic environment data structure which is essentially a linked list of hashes. It is primarily used for organising build configurations across a wide range of different sub-systems, e.g. platform configuration, target configuration, local project configuration, etc.
 	class Environment
-		def initialize(parent = nil, values = nil, &block)
-			@values = (values || {}).to_h
+		def initialize(parent = nil, values = nil, update = nil, &block)
 			@parent = parent
+			@values = (values || {}).to_h
+			@update = update
 			
 			@constructor = nil
 			
@@ -32,13 +33,29 @@ module Build
 			end
 		end
 		
+		attr_accessor :update
+		
+		# Create an environment after applying the update.
+		def update!(&block)
+			if block_given?
+				yield self
+			else
+				self.class.new(@parent, @values, &@update)
+			end
+		end
+		
 		def constructor
+			raise FrozenError, "Cannot update frozen environment!" if frozen?
+			
 			@constructor ||= Constructor.new(self)
 		end
 		
 		def freeze
-			@values.freeze
+			return self if frozen?
+			
 			@parent.freeze
+			@values.freeze
+			@update.freeze
 			
 			super
 		end
