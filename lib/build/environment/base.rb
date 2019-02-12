@@ -35,7 +35,7 @@ module Build
 		
 		attr_accessor :update
 		
-		def update!
+		def update!(*arguments)
 			self.dup(update: nil).tap do |environment|
 				environment.constructor.instance_exec(*arguments, &@update)
 			end
