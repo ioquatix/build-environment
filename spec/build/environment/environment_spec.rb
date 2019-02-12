@@ -59,7 +59,7 @@ RSpec.describe Build::Environment do
 			cflags ["-pipe"]
 		end
 		
-		expect(b.flatten.to_hash.keys.sort).to be == [:cflags, :sdk]
+		expect(b.to_hash.keys.sort).to be == [:cflags, :sdk]
 		
 		expect(Build::Environment::System::convert_to_shell(b.flatten)).to be == {
 			'SDK' => "bob-2.8",
