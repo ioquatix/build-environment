@@ -35,12 +35,6 @@ module Build
 		
 		attr_accessor :update
 		
-		def update!(*arguments)
-			self.dup(update: nil).tap do |environment|
-				environment.constructor.instance_exec(*arguments, &@update)
-			end
-		end
-		
 		# Apply the update function to this environment.
 		def update!(*arguments, &block)
 			if block_given?
