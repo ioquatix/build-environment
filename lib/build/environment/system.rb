@@ -67,7 +67,7 @@ module Build
 		
 		# Make a hash appropriate for a process environment
 		def export
-			System::convert_to_shell(self)
+			System.convert_to_shell(self)
 		end
 	end
 end
