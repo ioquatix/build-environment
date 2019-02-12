@@ -33,17 +33,17 @@ RSpec.describe Build::Environment do
 			define Rule, "link.static-library" do
 				append libraries static_library
 			end
-		end
+		end.flatten
 		
 		rules = environment.defined
 		
-		updated = environment.flatten
+		flat_environment = environment.flatten
 		
 		rules.each do |name, define|
-			updated.constructor.instance_exec(&define.block)
+			flat_environment.constructor.instance_exec(&define.block)
 		end
 		
-		expect(updated).to include(:libraries)
-		expect(updated[:libraries]).to include(static_library)
+		expect(flat_environment).to include(:libraries)
+		expect(flat_environment[:libraries]).to include(static_library)
 	end
 end

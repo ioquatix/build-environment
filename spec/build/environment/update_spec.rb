@@ -32,17 +32,13 @@ RSpec.describe Build::Environment do
 			bin ->{File.join(root, "bin")}
 			compiler ->{File.join(bin, "clang")}
 			
-			update do
-				append libraries "m"
-			end
+			append libraries "m"
 		end
 		
 		task = Build::Environment.new(platform) do
-			update do
-				library_path = File.join(parent.checksum, "Time.a")
+			library_path = File.join(parent.checksum, "Time.a")
 				
-				append libraries library_path
-			end
+			append libraries library_path
 		end
 		
 		environment = task.flatten do |environment|

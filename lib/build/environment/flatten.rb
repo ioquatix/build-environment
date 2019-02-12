@@ -77,7 +77,7 @@ module Build
 		# We fold in the ancestors one at a time from oldest to youngest.
 		def flatten_to_hash(hash, &block)
 			if @update
-				self.update!(&block).flatten_to_hash(hash)
+				self.dup.update!(&block).flatten_to_hash(hash)
 			else
 				if parent = @parent
 					parent.flatten_to_hash(hash)
@@ -89,12 +89,12 @@ module Build
 					if Replace === value
 						# Replace the parent value
 						hash[key] = value
-					elsif Array === previous
-						# Merge with the parent value
-						hash[key] = previous + Array(value)
 					elsif Default === value
 						# Update the parent value if not defined.
 						hash[key] = previous || value
+					elsif Array === previous
+						# Merge with the parent value
+						hash[key] = previous + Array(value)
 					else
 						hash[key] = value
 					end

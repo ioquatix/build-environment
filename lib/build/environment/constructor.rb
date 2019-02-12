@@ -37,7 +37,7 @@ module Build
 			def initialize(environment)
 				@environment = environment
 			end
-	
+			
 			def method_missing(name, value = nil, &block)
 				if block_given?
 					@environment[name] = block
@@ -79,17 +79,6 @@ module Build
 				
 				return name
 			end
-			
-			def update(&block)
-				if update = @environment.update
-					block = proc do |*args|
-						update.call(*args)
-						block.call(*args)
-					end
-				end
-				
-				@environment.update = block
-			end
 		end
 		
 		def self.combine(*environments)
@@ -102,15 +91,9 @@ module Build
 				end
 			end.flatten
 			
-			# Resequence based on order:
-			first = Environment.new(nil, environments.shift)
-			top = first
-			
-			environments.each do |tail|
-				top = Environment.new(top, tail)
+			environments.inject(nil) do |parent, environment|
+				environment.dup(parent: parent)
 			end
-			
-			return top
 		end
 		
 		def merge(&block)

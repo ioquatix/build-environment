@@ -71,19 +71,37 @@ RSpec.describe Build::Environment do
 	end
 	
 	it "should combine defaults" do
-		local = Build::Environment.new do
-			architectures ["-m64"]
-		end
-	
 		platform = Build::Environment.new do
-			default architectures ["-arch", "i386"]
+			os "linux"
+			compiler "cc"
+			architectures ["-march", "i386"]
 		end
-	
+		
+		expect(platform.to_hash).to be == {
+			os: "linux",
+			compiler: "cc",
+			architectures: ["-march", "i386"]
+		}
+		
+		local = Build::Environment.new do
+			compiler "clang"
+			default architectures ["-march", "i686"]
+		end
+		
+		expect(local.to_hash).to be == {
+			compiler: "clang",
+			architectures: ["-march", "i686"]
+		}
+		
 		combined = Build::Environment.combine(
 			platform,
 			local
-		)
-	
-		expect(combined[:architectures]).to be == ["-m64"]
+		).flatten
+		
+		expect(combined.to_hash).to be == {
+			os: "linux",
+			compiler: "clang",
+			architectures: ["-march", "i386"]
+		}
 	end
 end

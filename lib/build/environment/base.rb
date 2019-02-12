@@ -24,24 +24,34 @@ module Build
 		def initialize(parent = nil, values = nil, update = nil, &block)
 			@parent = parent
 			@values = (values || {}).to_h
-			@update = update
+			@update = update || block
 			
 			@constructor = nil
-			
-			if block_given?
-				self.constructor.instance_exec(&block)
-			end
+		end
+		
+		def dup(parent: @parent, values: @values, update: @update)
+			self.class.new(parent, values.dup, update)
 		end
 		
 		attr_accessor :update
 		
-		# Create an environment after applying the update.
-		def update!(&block)
+		def update!
+			self.dup(update: nil).tap do |environment|
+				environment.constructor.instance_exec(*arguments, &@update)
+			end
+		end
+		
+		# Apply the update function to this environment.
+		def update!(*arguments, &block)
 			if block_given?
 				yield self
 			else
-				self.class.new(@parent, @values, &@update)
+				self.constructor.instance_exec(*arguments, &@update)
+
+				@update = nil
 			end
+			
+			return self
 		end
 		
 		def constructor

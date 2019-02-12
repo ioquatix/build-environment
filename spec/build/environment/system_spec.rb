@@ -30,7 +30,7 @@ RSpec.describe Build::Environment do
 			
 			define Rule, "compile.foo" do
 			end
-		end
+		end.flatten
 		
 		expect(a).to include(:cflags)
 		expect(a).to include('compile.foo')
@@ -41,12 +41,12 @@ RSpec.describe Build::Environment do
 		expect(exported).to_not include('COMPILE.FOO')
 	end
 	
+	let(:system_environment) {Build::Environment.system_environment}
+	
 	it "shold load current ENV" do
 		ENV['TEST_KEY'] = 'test-value'
 		
-		e = Build::Environment::system_environment
-		
-		expect(e.values).to include(:path, :user, :home)
-		expect(e[:test_key]).to be == 'test-value'
+		expect(system_environment.values).to include(:path, :user, :home)
+		expect(system_environment[:test_key]).to be == 'test-value'
 	end
 end
