@@ -47,7 +47,7 @@ module Build
 			@values.select{|name,value| Define === value}
 		end
 		
-		def checksum(digester: Digest::MD5.new)
+		def checksum(digester: Digest::SHA1.new)
 			checksum_recursively(digester)
 			
 			return digester.hexdigest
