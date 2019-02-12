@@ -62,7 +62,13 @@ module Build
 		def checksum_recursively(digester)
 			sorted_keys.each do |key|
 				digester.update(key.to_s)
-				digester.update(@values[key].to_s)
+				
+				case value = @values[key]
+				when Proc
+					digester.update(value.source_location.join)
+				else
+					digester.update(value.to_s)
+				end
 			end
 			
 			@parent.checksum_recursively(digester) if @parent
