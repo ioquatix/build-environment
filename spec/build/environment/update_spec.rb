@@ -39,7 +39,6 @@ RSpec.describe Build::Environment do
 		
 		task = Build::Environment.new(platform) do
 			update do
-				pp parent, parent.checksum
 				library_path = File.join(parent.checksum, "Time.a")
 				
 				append libraries library_path
