@@ -21,6 +21,8 @@
 module Build
 	# This is the basic environment data structure which is essentially a linked list of hashes. It is primarily used for organising build configurations across a wide range of different sub-systems, e.g. platform configuration, target configuration, local project configuration, etc.
 	class Environment
+		include Comparable
+		
 		def initialize(parent = nil, values = nil, update = nil, &block)
 			@parent = parent
 			@values = (values || {}).to_h
@@ -29,6 +31,10 @@ module Build
 		
 		def dup(parent: @parent, values: @values, update: @update)
 			self.class.new(parent, values.dup, update)
+		end
+		
+		def <=> other
+			self.to_h <=> other.to_h
 		end
 		
 		attr_accessor :update

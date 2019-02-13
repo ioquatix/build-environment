@@ -38,11 +38,14 @@ RSpec.describe Build::Environment do
 		a = Build::Environment.new
 		a[:cflags] = ["-std=c++11"]
 		
-		b = Build::Environment.new(a, {})
+		b = Build::Environment.new(a)
 		b[:cflags] = ["-stdlib=libc++"]
 		b[:rcflags] = lambda {cflags.reverse}
 		
-		expect(b.flatten.to_hash).to be == {:cflags => ["-std=c++11", "-stdlib=libc++"], :rcflags => ["-stdlib=libc++", "-std=c++11"]}
+		expect(b.evaluate).to be == {
+			:cflags => ["-std=c++11", "-stdlib=libc++"],
+			:rcflags => ["-stdlib=libc++", "-std=c++11"]
+		}
 	end
 	
 	it "should resolve nested lambda" do
@@ -59,14 +62,14 @@ RSpec.describe Build::Environment do
 			cflags ["-pipe"]
 		end
 		
-		expect(b.to_hash.keys.sort).to be == [:cflags, :sdk]
+		expect(b.to_h.keys.sort).to be == [:cflags, :sdk]
 		
-		expect(Build::Environment::System::convert_to_shell(b.flatten)).to be == {
+		expect(Build::Environment::System::convert_to_shell(b.evaluate)).to be == {
 			'SDK' => "bob-2.8",
 			'CFLAGS' => "-sdk=bob-2.8"
 		}
 		
-		expect(c.flatten[:cflags]).to be == %W{-sdk=bob-2.8 -pipe}
+		expect(c.evaluate[:cflags]).to be == %W{-sdk=bob-2.8 -pipe}
 	end
 	
 	it "should combine environments" do
@@ -90,7 +93,7 @@ RSpec.describe Build::Environment do
 			architectures ["-march", "i386"]
 		end
 		
-		expect(platform.to_hash).to be == {
+		expect(platform).to be == {
 			os: "linux",
 			compiler: "cc",
 			architectures: ["-march", "i386"]
@@ -101,7 +104,7 @@ RSpec.describe Build::Environment do
 			default architectures ["-march", "i686"]
 		end
 		
-		expect(local.to_hash).to be == {
+		expect(local).to be == {
 			compiler: "clang",
 			architectures: ["-march", "i686"]
 		}
@@ -111,7 +114,7 @@ RSpec.describe Build::Environment do
 			local
 		).flatten
 		
-		expect(combined.to_hash).to be == {
+		expect(combined).to be == {
 			os: "linux",
 			compiler: "clang",
 			architectures: ["-march", "i386"]
