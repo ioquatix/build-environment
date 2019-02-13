@@ -22,20 +22,20 @@ require 'build/environment'
 
 RSpec.describe "Build::Environment#checksum" do
 	it "should compute a checksum" do
-		e = Build::Environment.hash(a: 10, b: 20)
+		e = Build::Environment.new do
+			a 10
+			b 20
+		end.evaluate
 		
 		expect(e.checksum).to be == "3a781e8f5250ccb2bca472085a4e366188621d8a"
 	end
 	
 	it "should compute same checksum when keys are in different order" do
-		e = Build::Environment.hash(b: 20, a: 10)
+		e = Build::Environment.new do
+			b 20
+			a 10
+		end.evaluate
 		
 		expect(e.checksum).to be == "3a781e8f5250ccb2bca472085a4e366188621d8a"
-	end
-	
-	it "should handle both string and symbol keys" do
-		e = Build::Environment.hash(:a => 20, "b" => 10)
-		
-		expect(e.checksum).to be == "f8738eb2034ec768878216426124c33af7ae1a04"
 	end
 end

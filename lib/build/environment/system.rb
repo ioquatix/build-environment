@@ -61,8 +61,8 @@ module Build
 		end
 		
 		# Construct an environment from a given system environment:
-		def self.system_environment(env = ENV)
-			self.new(nil, Hash[env.map{|key, value| [key.downcase.to_sym, value]}])
+		def self.system_environment(env = ENV, **options)
+			self.new(nil, Hash[env.map{|key, value| [key.downcase.to_sym, value]}], **options)
 		end
 		
 		# Make a hash appropriate for a process environment

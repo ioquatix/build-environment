@@ -123,8 +123,8 @@ module Build
 			end
 		end
 		
-		def merge(&block)
-			self.class.new(self, &block)
+		def merge(**options, &block)
+			self.class.new(self, **options, &block)
 		end
 		
 		# Convert the hierarchy of environments to an array where the parent comes before the child.

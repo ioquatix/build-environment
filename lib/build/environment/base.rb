@@ -23,14 +23,16 @@ module Build
 	class Environment
 		include Comparable
 		
-		def initialize(parent = nil, values = nil, update = nil, &block)
+		def initialize(parent = nil, values = nil, name: nil, &block)
 			@parent = parent
 			@values = (values || {}).to_h
-			@update = update || block
+			@update = block
+			
+			@name = name
 		end
 		
 		def dup(parent: @parent, values: @values, update: @update)
-			self.class.new(parent, values.dup, update)
+			self.class.new(parent, values.dup, name: @name, &update)
 		end
 		
 		def <=> other
@@ -60,10 +62,6 @@ module Build
 			@update.freeze
 			
 			super
-		end
-		
-		def self.hash(values = {})
-			self.new(nil, values)
 		end
 		
 		attr :values
@@ -97,6 +95,10 @@ module Build
 		
 		def to_s
 			buffer = String.new("\#<#{self.class} ")
+			
+			if @name
+				buffer << @name.inspect << ' '
+			end
 			
 			if @update
 				buffer << @update.source_location.join(':') << ' '

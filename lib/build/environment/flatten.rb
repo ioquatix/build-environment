@@ -22,11 +22,7 @@ require 'digest/md5'
 
 module Build
 	class Environment
-		def to_h
-			@values
-		end
-		
-		def to_hash(&block)
+		def to_h(&block)
 			hash = {}
 			
 			# Flatten this chain of environments:
@@ -39,16 +35,16 @@ module Build
 			Hash[hash.map{|key, value| [key, evaluator.object_value(value)]}]
 		end
 		
-		def evaluate(&block)
-			self.class.new(nil, self.to_hash(&block))
+		def evaluate(**options, &block)
+			self.class.new(nil, self.to_h(&block), **options)
 		end
 		
-		def flatten(&block)
+		def flatten(**options, &block)
 			hash = {}
 			
 			flatten_to_hash(hash, &block)
 			
-			return self.class.new(nil, hash)
+			return self.class.new(nil, hash, **options)
 		end
 		
 		def defined
