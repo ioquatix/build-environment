@@ -38,14 +38,22 @@ module Build
 				@environment = environment
 			end
 			
-			def method_missing(name, value = nil, &block)
-				if block_given?
+			def method_missing(name, *args, **options, &block)
+				if block_given? and args.empty?
 					@environment[name] = block
-				else
-					@environment[name] = value
+					
+					return name
+				elsif !block_given? and args.any?
+					if args.count == 1
+						@environment[name] = args.first
+					else
+						@environment[name] = args
+					end
+					
+					return name
 				end
 				
-				name
+				super(name, *args, **options, &block)
 			end
 	
 			def [] key
