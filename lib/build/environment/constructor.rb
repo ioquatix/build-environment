@@ -33,9 +33,20 @@ module Build
 			end
 		end
 		
+		def construct!(proxy, *arguments, &block)
+			constructor = Constructor.new(self, proxy)
+			
+			if block_given?
+				constructor.instance_exec(*arguments, &block)
+			end
+			
+			return self
+		end
+		
 		class Constructor
-			def initialize(environment)
+			def initialize(environment, proxy = nil)
 				@environment = environment
+				@proxy = proxy
 			end
 			
 			def method_missing(name, *args, **options, &block)
@@ -53,9 +64,17 @@ module Build
 					return name
 				end
 				
-				super(name, *args, **options, &block)
+				if @proxy
+					@proxy.send(name, *args, **options, &block)
+				else
+					super
+				end
 			end
-	
+			
+			def respond_to(*args)
+				super or @proxy&.respond_to(*args)
+			end
+			
 			def [] key
 				@environment[key]
 			end

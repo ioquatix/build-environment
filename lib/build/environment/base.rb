@@ -25,8 +25,6 @@ module Build
 			@parent = parent
 			@values = (values || {}).to_h
 			@update = update || block
-			
-			@constructor = nil
 		end
 		
 		def dup(parent: @parent, values: @values, update: @update)
@@ -38,20 +36,14 @@ module Build
 		# Apply the update function to this environment.
 		def update!(*arguments, &block)
 			if block_given?
-				yield self
+				# Either you do it yourself:
+				yield @update
 			else
-				self.constructor.instance_exec(*arguments, &@update)
-
-				@update = nil
+				# or use the default constructor:
+				construct!(self, *arguments, &@update)
 			end
 			
-			return self
-		end
-		
-		def constructor
-			raise FrozenError, "Cannot update frozen environment!" if frozen?
-			
-			@constructor ||= Constructor.new(self)
+			@update = nil
 		end
 		
 		def freeze

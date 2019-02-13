@@ -40,7 +40,8 @@ RSpec.describe Build::Environment do
 		flat_environment = environment.flatten
 		
 		rules.each do |name, define|
-			flat_environment.constructor.instance_exec(&define.block)
+			constructor = Build::Environment::Constructor.new(flat_environment)
+			constructor.instance_exec(&define.block)
 		end
 		
 		expect(flat_environment).to include(:libraries)

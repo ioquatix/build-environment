@@ -39,8 +39,16 @@ module Build
 			Hash[hash.map{|key, value| [key, evaluator.object_value(value)]}]
 		end
 		
-		def flatten(&block)
+		def evaluate(&block)
 			self.class.new(nil, self.to_hash(&block))
+		end
+		
+		def flatten(&block)
+			hash = {}
+			
+			flatten_to_hash(hash, &block)
+			
+			return self.class.new(nil, hash)
 		end
 		
 		def defined
@@ -95,6 +103,16 @@ module Build
 			return self
 		end
 		
+		def apply!(&block)
+			if block_given?
+				yield self
+			else
+				self.update!
+			end
+			
+			return self
+		end
+		
 		# We fold in the ancestors one at a time from oldest to youngest.
 		def flatten_to_hash(hash, &block)
 			if parent = @parent
@@ -102,7 +120,7 @@ module Build
 			end
 			
 			if @update
-				self.dup(parent: parent).update!(&block).update_hash(hash)
+				self.dup(parent: parent).apply!(&block).update_hash(hash)
 			else
 				self.update_hash(hash)
 			end
