@@ -22,11 +22,11 @@ require 'digest/md5'
 
 module Build
 	class Environment
-		def to_h(&block)
+		def to_h
 			hash = {}
 			
 			# Flatten this chain of environments:
-			flatten_to_hash(hash, &block)
+			flatten_to_hash(hash)
 			
 			# Evaluate all items to their respective object value:
 			evaluator = Evaluator.new(hash)
@@ -35,14 +35,14 @@ module Build
 			Hash[hash.map{|key, value| [key, evaluator.object_value(value)]}]
 		end
 		
-		def evaluate(**options, &block)
-			self.class.new(nil, self.to_h(&block), **options)
+		def evaluate(**options)
+			self.class.new(nil, self.to_h, **options)
 		end
 		
-		def flatten(**options, &block)
+		def flatten(**options)
 			hash = {}
 			
-			flatten_to_hash(hash, &block)
+			flatten_to_hash(hash)
 			
 			return self.class.new(nil, hash, **options)
 		end
@@ -99,24 +99,22 @@ module Build
 			return self
 		end
 		
-		def apply!(&block)
-			if block_given?
-				yield self
-			else
-				self.update!
-			end
+		# Apply the update function to this environment.
+		def update!
+			construct!(self, &@update)
+			@update = nil
 			
 			return self
 		end
 		
 		# We fold in the ancestors one at a time from oldest to youngest.
-		def flatten_to_hash(hash, &block)
+		def flatten_to_hash(hash)
 			if parent = @parent
-				parent = parent.flatten_to_hash(hash, &block)
+				parent = parent.flatten_to_hash(hash)
 			end
 			
 			if @update
-				self.dup(parent: parent).apply!(&block).update_hash(hash)
+				self.dup(parent: parent).update!.update_hash(hash)
 			else
 				self.update_hash(hash)
 			end

@@ -44,19 +44,6 @@ module Build
 			self.to_h <=> other.to_h
 		end
 		
-		# Apply the update function to this environment.
-		def update!(*arguments, &block)
-			if block_given?
-				# Either you do it yourself:
-				yield @update
-			else
-				# or use the default constructor:
-				construct!(self, *arguments, &@update)
-			end
-			
-			@update = nil
-		end
-		
 		def freeze
 			return self if frozen?
 			
