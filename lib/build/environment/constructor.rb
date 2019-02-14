@@ -65,7 +65,12 @@ module Build
 				end
 				
 				if @proxy
-					@proxy.send(name, *args, **options, &block)
+					# This is a bit of a hack, but I'm not sure if there is a better way.
+					if options.empty?
+						@proxy.send(name, *args, &block)
+					else
+						@proxy.send(name, *args, **options, &block)
+					end
 				else
 					super
 				end
