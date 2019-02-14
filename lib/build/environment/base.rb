@@ -31,6 +31,11 @@ module Build
 			@name = name
 		end
 		
+		attr :parent
+		attr :values
+		attr :update
+		attr :name
+		
 		def dup(parent: @parent, values: @values, update: @update)
 			self.class.new(parent, values.dup, name: @name, &update)
 		end
@@ -38,8 +43,6 @@ module Build
 		def <=> other
 			self.to_h <=> other.to_h
 		end
-		
-		attr_accessor :update
 		
 		# Apply the update function to this environment.
 		def update!(*arguments, &block)
@@ -63,9 +66,6 @@ module Build
 			
 			super
 		end
-		
-		attr :values
-		attr :parent
 		
 		def lookup(name)
 			if @values.include? name
