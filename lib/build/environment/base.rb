@@ -36,8 +36,8 @@ module Build
 		attr :update
 		attr :name
 		
-		def dup(parent: @parent, values: @values, update: @update)
-			self.class.new(parent, values.dup, name: @name, &update)
+		def dup(parent: @parent, values: @values, update: @update, name: @name)
+			self.class.new(parent, values.dup, name: name, &update)
 		end
 		
 		def <=> other
