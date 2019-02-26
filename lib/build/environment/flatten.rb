@@ -91,6 +91,8 @@ module Build
 				elsif Array === previous
 					# Merge with the parent value
 					hash[key] = previous + Array(value)
+				elsif OpenStruct === value
+					hash[key] = value.to_h
 				else
 					hash[key] = value
 				end

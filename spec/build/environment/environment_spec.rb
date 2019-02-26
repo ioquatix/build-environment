@@ -120,4 +120,28 @@ RSpec.describe Build::Environment do
 			architectures: ["-march", "i386"]
 		}
 	end
+	
+	it "can make key with nil value" do
+		environment = Build::Environment.new do
+			thing nil
+		end
+		
+		expect(environment.to_h).to be == {thing: nil}
+	end
+	
+	it "can make key with false value" do
+		environment = Build::Environment.new do
+			thing false
+		end
+		
+		expect(environment.to_h).to be == {thing: false}
+	end
+	
+	it "can make key with hash value" do
+		environment = Build::Environment.new do
+			thing hash(foo: 10)
+		end
+		
+		expect(environment.to_h).to be == {thing: {foo: 10}}
+	end
 end

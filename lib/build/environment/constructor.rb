@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'ostruct'
+
 module Build
 	class Environment
 		Default = Struct.new(:value)
@@ -54,7 +56,7 @@ module Build
 					@environment[name] = block
 					
 					return name
-				elsif !block_given? and args.any?
+				elsif !block_given? and !args.empty?
 					if args.count == 1
 						@environment[name] = args.first
 					else
@@ -86,6 +88,10 @@ module Build
 			
 			def parent
 				@environment.parent
+			end
+			
+			def hash(**options)
+				OpenStruct.new(options)
 			end
 			
 			def default(name)
