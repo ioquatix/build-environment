@@ -35,6 +35,10 @@ module Build
 			Hash[hash.map{|key, value| [key, evaluator.object_value(value)]}]
 		end
 		
+		def evaluator
+			Evaluator.new(self)
+		end
+		
 		def evaluate(**options)
 			self.class.new(nil, self.to_h, **options)
 		end

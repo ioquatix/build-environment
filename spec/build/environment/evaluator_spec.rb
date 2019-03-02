@@ -1,4 +1,4 @@
-# Copyright, 2012, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,38 +18,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module Build
-	class Environment
-		class Evaluator
-			def initialize(environment)
-				@environment = environment
-			end
-			
-			def respond_to?(name, include_private = false)
-				@environment.include?(name) || super
-			end
-			
-			def method_missing(name)
-				object_value(@environment[name])
-			end
-			
-			# Compute the literal object value for a given key:
-			def object_value(value)
-				case value
-				when Array
-					value.collect{|item| object_value(item)}.flatten
-				when Symbol
-					object_value(@environment[value])
-				when Proc
-					object_value(instance_exec(&value))
-				when Default
-					object_value(value.value)
-				when Replace
-					object_value(value.value)
-				else
-					value
-				end
-			end
+require 'build/environment'
+
+RSpec.describe Build::Environment::Evaluator do
+	it "can evaluate procs" do
+		environment = Build::Environment.new do
+			fruit {"apples"}
 		end
+		
+		expect(environment.flatten.evaluator.fruit).to be == "apples"
+	end
+	
+	it "can evaluate symbols" do
+		environment = Build::Environment.new do
+			fruit {"apples"}
+			dinner :fruit
+		end
+		
+		expect(environment.flatten.evaluator.dinner).to be == "apples"
 	end
 end
