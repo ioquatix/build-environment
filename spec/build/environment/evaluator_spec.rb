@@ -37,4 +37,16 @@ RSpec.describe Build::Environment::Evaluator do
 		
 		expect(environment.flatten.evaluator.dinner).to be == "apples"
 	end
+	
+	it "caches results" do
+		environment = Build::Environment.new do
+			index = 0
+			size {index += 1}
+		end
+		
+		evaluator = environment.flatten.evaluator
+		
+		expect(evaluator.size).to be == 1
+		expect(evaluator.size).to be == 1
+	end
 end

@@ -23,6 +23,7 @@ module Build
 		class Evaluator
 			def initialize(environment)
 				@environment = environment
+				@cache = {}
 			end
 			
 			def respond_to?(name, include_private = false)
@@ -30,7 +31,7 @@ module Build
 			end
 			
 			def method_missing(name)
-				object_value(@environment[name])
+				@cache[name] ||= object_value(@environment[name])
 			end
 			
 			# Compute the literal object value for a given key:
