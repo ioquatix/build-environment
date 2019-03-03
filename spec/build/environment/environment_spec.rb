@@ -34,6 +34,23 @@ RSpec.describe Build::Environment do
 		end
 	end
 	
+	context '#include?' do
+		it "should not include anything" do
+			expect(subject.include?(:thing)).to be_falsey
+		end
+		
+		it "should include key" do
+			subject[:thing] = 42
+			expect(subject.include?(:thing)).to be_truthy
+		end
+		
+		it "should include key if parent includes key" do
+			subject[:thing] = 42
+			child = Build::Environment.new(subject)
+			expect(child.include?(:thing)).to be_truthy
+		end
+	end
+	
 	it "should chain environments together" do
 		a = Build::Environment.new
 		a[:cflags] = ["-std=c++11"]

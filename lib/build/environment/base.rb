@@ -63,7 +63,11 @@ module Build
 		end
 		
 		def include?(key)
-			lookup(key) != nil
+			if @values.include?(key)
+				true
+			elsif @parent
+				@parent.include?(key)
+			end
 		end
 		
 		def size
