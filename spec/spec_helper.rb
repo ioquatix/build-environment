@@ -1,6 +1,5 @@
 
 require 'covered/rspec'
-require 'build/environment'
 
 RSpec.configure do |config|
 	config.disable_monkey_patching!
