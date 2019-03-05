@@ -52,18 +52,20 @@ module Build
 			end
 			
 			def method_missing(name, *args, **options, &block)
-				if block_given? and args.empty?
-					@environment[name] = block
-					
-					return name
-				elsif !block_given? and !args.empty?
-					if args.count == 1
-						@environment[name] = args.first
-					else
-						@environment[name] = args
+				if options.empty?
+					if block_given? and args.empty?
+						@environment[name] = block
+						
+						return name
+					elsif !block_given? and !args.empty?
+						if args.count == 1
+							@environment[name] = args.first
+						else
+							@environment[name] = args
+						end
+						
+						return name
 					end
-					
-					return name
 				end
 				
 				if @proxy
