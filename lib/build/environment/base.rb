@@ -74,6 +74,18 @@ module Build
 			@values.size + (@parent ? @parent.size : 0)
 		end
 		
+		def fetch(key, *default, &block)
+			if environment = lookup(key)
+				return environment.values[key]
+			elsif block_given?
+				yield(key, *default)
+			elsif !default.empty?
+				return default.first
+			else
+				raise KeyError.new("Environment missing #{key}")
+			end
+		end
+		
 		def [](key)
 			environment = lookup(key)
 			

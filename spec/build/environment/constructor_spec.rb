@@ -52,4 +52,13 @@ RSpec.describe Build::Environment::Constructor do
 		
 		subject.build library: 'bar', &a_block
 	end
+	
+	it "can get environment value" do
+		subject.foo :bar
+		expect(subject.foo).to be == :bar
+	end
+	
+	it "raises error when trying to access non-existant value" do
+		expect{subject.foo}.to raise_error(KeyError)
+	end
 end
