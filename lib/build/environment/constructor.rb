@@ -57,7 +57,7 @@ module Build
 						@environment[name] = block
 						
 						return name
-					elsif !block_given?
+					elsif !args.empty?
 						if args.count == 1
 							@environment[name] = args.first
 						else

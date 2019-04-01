@@ -31,6 +31,12 @@ RSpec.describe Build::Environment::Constructor do
 		expect(environment[:foo]).to be == :bar
 	end
 	
+	it "should set value to array" do
+		subject.foo :bar, :baz
+		
+		expect(environment[:foo]).to be == [:bar, :baz]
+	end
+	
 	it "should set value with block" do
 		subject.foo {:bar}
 		
@@ -51,5 +57,12 @@ RSpec.describe Build::Environment::Constructor do
 		end
 		
 		subject.build library: 'bar', &a_block
+	end
+	
+	it "cannot get values" do
+		subject.foo :bar
+		expect do
+			subject.foo
+		end.to raise_error(NoMethodError)
 	end
 end
