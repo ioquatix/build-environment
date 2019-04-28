@@ -22,7 +22,8 @@ require 'build/environment'
 
 RSpec.describe Build::Environment::Constructor do
 	let(:proxy) {Object.new}
-	let(:environment) {Build::Environment.new(nil)}
+	let(:parent) {Build::Environment.new}
+	let(:environment) {Build::Environment.new(parent)}
 	subject{described_class.new(environment, proxy)}
 	
 	it "should set value" do
@@ -59,10 +60,15 @@ RSpec.describe Build::Environment::Constructor do
 		subject.build library: 'bar', &a_block
 	end
 	
-	it "cannot get values" do
-		subject.foo :bar
-		expect do
-			subject.foo
-		end.to raise_error(NoMethodError)
+	it "can get value from environment" do
+		environment[:foo] = 'bar'
+		
+		expect(subject.foo).to be == 'bar'
+	end
+	
+	it "can get value from parent environment" do
+		parent[:foo] = 'bar'
+		
+		expect(subject.foo).to be == 'bar'
 	end
 end

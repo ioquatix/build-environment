@@ -51,12 +51,21 @@ module Build
 				@proxy = proxy
 			end
 			
+			def respond_to?(name, include_private = false)
+				@environment.include?(name) || @proxy&.respond_to?(name, include_private) || super
+			end
+			
 			def method_missing(name, *args, **options, &block)
 				if options.empty?
-					if args.empty? and block_given?
-						@environment[name] = block
-						
-						return name
+					if args.empty?
+						if block_given?
+							@environment[name] = block
+							
+							return name
+						else
+							# This behaviour is useful, but also could be surprising. It allows direct access to environment variables during the constructor, but these values *might not* be the same as the final evaluated, flattened hash.
+							return @environment[name]
+						end
 					elsif !args.empty?
 						if args.count == 1
 							@environment[name] = args.first
