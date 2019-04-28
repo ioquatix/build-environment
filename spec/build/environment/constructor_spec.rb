@@ -60,15 +60,11 @@ RSpec.describe Build::Environment::Constructor do
 		subject.build library: 'bar', &a_block
 	end
 	
-	it "can get value from environment" do
+	it "cannot get value from environment" do
 		environment[:foo] = 'bar'
 		
-		expect(subject.foo).to be == 'bar'
-	end
-	
-	it "can get value from parent environment" do
-		parent[:foo] = 'bar'
-		
-		expect(subject.foo).to be == 'bar'
+		expect do
+			subject.foo
+		end.to raise_error(NoMethodError)
 	end
 end

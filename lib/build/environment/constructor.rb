@@ -57,15 +57,10 @@ module Build
 			
 			def method_missing(name, *args, **options, &block)
 				if options.empty?
-					if args.empty?
-						if block_given?
-							@environment[name] = block
-							
-							return name
-						else
-							# This behaviour is useful, but also could be surprising. It allows direct access to environment variables during the constructor, but these values *might not* be the same as the final evaluated, flattened hash.
-							return @environment[name]
-						end
+					if args.empty? and block_given?
+						@environment[name] = block
+						
+						return name
 					elsif !args.empty?
 						if args.count == 1
 							@environment[name] = args.first
