@@ -48,6 +48,8 @@ module Build
 			
 			flatten_to_hash(hash)
 			
+			options[:name] ||= self.name
+			
 			return self.class.new(nil, hash, **options)
 		end
 		
