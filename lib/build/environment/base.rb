@@ -31,6 +31,23 @@ module Build
 			@name = name
 		end
 		
+		def == other
+			self.equal?(other) or
+				self.class == other.class and
+				@parent == other.parent and
+				@values == other.values and
+				@update == other.update and
+				@name == other.name
+		end
+		
+		def eql?(other)
+			self == other
+		end
+		
+		def hash
+			@parent.hash ^ @values.hash ^ @update.hash ^ @name.hash
+		end
+		
 		attr :parent
 		attr :values
 		attr :update
