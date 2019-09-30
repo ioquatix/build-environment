@@ -59,7 +59,7 @@ RSpec.describe Build::Environment do
 		b[:cflags] = ["-stdlib=libc++"]
 		b[:rcflags] = lambda {cflags.reverse}
 		
-		expect(b.evaluate).to be == {
+		expect(b.evaluate.to_h).to be == {
 			:cflags => ["-std=c++11", "-stdlib=libc++"],
 			:rcflags => ["-stdlib=libc++", "-std=c++11"]
 		}
@@ -110,7 +110,7 @@ RSpec.describe Build::Environment do
 			architectures ["-march", "i386"]
 		end
 		
-		expect(platform).to be == {
+		expect(platform.to_h).to be == {
 			os: "linux",
 			compiler: "cc",
 			architectures: ["-march", "i386"]
@@ -121,7 +121,7 @@ RSpec.describe Build::Environment do
 			default architectures ["-march", "i686"]
 		end
 		
-		expect(local).to be == {
+		expect(local.to_h).to be == {
 			compiler: "clang",
 			architectures: ["-march", "i686"]
 		}
@@ -131,7 +131,7 @@ RSpec.describe Build::Environment do
 			local
 		).flatten
 		
-		expect(combined).to be == {
+		expect(combined.to_h).to be == {
 			os: "linux",
 			compiler: "clang",
 			architectures: ["-march", "i386"]
