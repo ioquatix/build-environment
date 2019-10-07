@@ -125,17 +125,15 @@ module Build
 			end
 		end
 		
+		# Flatten the list of environments.
 		def self.combine(*environments)
-			# Flatten the list of environments:
-			environments = environments.collect do |environment|
-				if Environment === environment
-					environment.to_a
-				else
-					environment
-				end
-			end.flatten
+			ordered = []
 			
-			environments.inject(nil) do |parent, environment|
+			environments.each do |environment|
+				environment.flatten_to_array(ordered)
+			end
+			
+			ordered.inject(nil) do |parent, environment|
 				environment.dup(parent: parent)
 			end
 		end
@@ -152,8 +150,6 @@ module Build
 			
 			return flat
 		end
-		
-		protected
 		
 		def flatten_to_array(array)
 			if @parent
