@@ -26,6 +26,13 @@ module Build
 				@cache = {}
 			end
 			
+			def initialize_dup(other)
+				@environment = other.instance_variable_get(:@environment)
+				@cache = other.instance_variable_get(:@cache).dup
+				
+				super
+			end
+			
 			def respond_to?(name, include_private = false)
 				@environment.include?(name) || super
 			end

@@ -20,33 +20,45 @@
 
 require 'build/environment'
 
+require 'securerandom'
+
 RSpec.describe Build::Environment::Evaluator do
-	it "can evaluate procs" do
-		environment = Build::Environment.new do
-			fruit {"apples"}
-		end
-		
-		expect(environment.flatten.evaluator.fruit).to be == "apples"
-	end
-	
-	it "can evaluate symbols" do
-		environment = Build::Environment.new do
+	let(:environment) do
+		Build::Environment.new do
 			fruit {"apples"}
 			dinner :fruit
 		end
-		
-		expect(environment.flatten.evaluator.dinner).to be == "apples"
 	end
 	
-	it "caches results" do
-		environment = Build::Environment.new do
-			index = 0
-			size {index += 1}
+	subject {environment.flatten.evaluator}
+	
+	it "can evaluate procs" do
+		expect(subject.fruit).to be == "apples"
+	end
+	
+	it "can dereference symbols" do
+		expect(subject.dinner).to be == "apples"
+	end
+	
+	context "computed values" do
+		let(:environment) do
+			Build::Environment.new do
+				secret {SecureRandom.hex(32)}
+			end
 		end
 		
-		evaluator = environment.flatten.evaluator
+		it "caches the computed value" do
+			secret = subject.secret
+			
+			expect(subject.secret).to be == secret
+		end
 		
-		expect(evaluator.size).to be == 1
-		expect(evaluator.size).to be == 1
+		describe '#dup' do
+			it "retains existing cache" do
+				secret = subject.secret
+				
+				expect(subject.dup.secret).to be == secret
+			end
+		end
 	end
 end
