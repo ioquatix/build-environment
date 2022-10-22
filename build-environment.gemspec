@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
 	spec.authors       = ["Samuel Williams"]
 	spec.email         = ["samuel.williams@oriontransfer.co.nz"]
 	spec.summary       = %q{A nested hash data structure for controlling build environments.}
-	spec.homepage      = ""
+	spec.homepage      = "https://github.com/ioquatix/build-environment"
 	spec.license       = "MIT"
 
 	spec.files         = `git ls-files -z`.split("\x0")
