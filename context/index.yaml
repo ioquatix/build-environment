@@ -5,7 +5,7 @@ description: A nested hash data structure for controlling build environments.
 metadata:
   documentation_uri: https://ioquatix.github.io/build-environment
   funding_uri: https://github.com/sponsors/ioquatix
-  source_code_uri: https://github.com/ioquatix/build-environment
+  source_code_uri: https://github.com/ioquatix/build-environment.git
 files:
 - path: getting-started.md
   title: Getting Started
