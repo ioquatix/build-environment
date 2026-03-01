@@ -8,6 +8,8 @@ require "ostruct"
 
 module Build
 	class Environment
+		# Evaluate all environment layers into a single flat hash with all values resolved.
+		# @returns [Hash] A hash mapping all keys to their fully evaluated values.
 		def to_h
 			hash = {}
 			
@@ -21,14 +23,22 @@ module Build
 			Hash[hash.map{|key, value| [key, evaluator.object_value(value)]}]
 		end
 		
+		# Create a new {Evaluator} for this environment.
+		# @returns [Evaluator] An evaluator backed by this environment.
 		def evaluator
 			Evaluator.new(self)
 		end
 		
+		# Flatten and evaluate all values, returning a new single-layer environment.
+		# @parameter options [Hash] Options forwarded to the new environment's constructor.
+		# @returns [Environment] A new environment with all values fully evaluated.
 		def evaluate(**options)
 			self.class.new(nil, self.to_h, **options)
 		end
 		
+		# Merge all environment layers into a single-level environment without evaluating values.
+		# @parameter options [Hash] Options forwarded to the new environment's constructor.
+		# @returns [Environment] A flat environment containing the merged but unevaluated values.
 		def flatten(**options)
 			hash = {}
 			
@@ -39,10 +49,15 @@ module Build
 			return self.class.new(nil, hash, **options)
 		end
 		
+		# Return all key-value pairs in the current layer whose values are `Define` instances.
+		# @returns [Hash] A hash of keys mapped to their `Define` values.
 		def defined
 			@values.select{|name,value| Define === value}
 		end
 		
+		# Compute a hex digest checksum of the environment's content.
+		# @parameter digester [Digest] The digest algorithm to use.
+		# @returns [String] The hexadecimal digest string.
 		def checksum(digester: Digest::SHA1.new)
 			checksum_recursively(digester)
 			

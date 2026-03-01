@@ -5,7 +5,11 @@
 
 module Build
 	class Environment
+		# Provides utilities for converting environment values to shell-compatible strings.
 		module System
+			# Escape a value for safe use in a shell command string.
+			# @parameter value [String | Array] The value to escape.
+			# @returns [String] The shell-escaped string.
 			def self.shell_escape(value)
 				case value
 				when Array
@@ -16,6 +20,9 @@ module Build
 				end
 			end
 			
+			# Check whether a value is suitable for export to a shell environment.
+			# @parameter value [Object] The value to check.
+			# @returns [Boolean] `true` if the value can be exported, `false` otherwise.
 			def self.valid_for_export(value)
 				case value
 				when Array
@@ -35,6 +42,9 @@ module Build
 				end
 			end
 			
+			# Convert an environment to a shell-compatible hash with uppercase string keys and escaped string values.
+			# @parameter environment [Environment] The environment to convert.
+			# @returns [Hash] A hash of uppercase string keys mapped to shell-escaped string values.
 			def self.convert_to_shell(environment)
 				values = environment.values.select{|key, value| valid_for_export(value)}
 				

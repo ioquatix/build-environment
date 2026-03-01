@@ -1,0 +1,13 @@
+# Automatically generated context index for Utopia::Project guides.
+# Do not edit then files in this directory directly, instead edit the guides and then run `bake utopia:project:agent:context:update`.
+---
+description: A nested hash data structure for controlling build environments.
+metadata:
+  documentation_uri: https://ioquatix.github.io/build-environment
+  funding_uri: https://github.com/sponsors/ioquatix
+  source_code_uri: https://github.com/ioquatix/build-environment
+files:
+- path: getting-started.md
+  title: Getting Started
+  description: This guide explains how to get started with `build-environment`, a
+    nested key-value data structure for organising build configurations.

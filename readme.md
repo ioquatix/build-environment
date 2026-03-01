@@ -4,46 +4,17 @@ Build::Environment provides a nested hash data structure which can contain lambd
 
 [![Development Status](https://github.com/ioquatix/build-environment/workflows/Test/badge.svg)](https://github.com/ioquatix/build-environment/actions?workflow=Test)
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'build-environment'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install build-environment
-
 ## Usage
 
-A build environment in essence is a key-value storage, but it maintains a linked list so that lookups can be propagated towards the root. This allows a parent to provide, say, defaults, while the child can override these. The envirionment can contain strings, arrays and lambdas, which are evaluated when converting the environment into a hash.
+Please see the [project documentation](https://ioquatix.github.io/build-environment) for more details.
 
-``` ruby
-a = Build::Environment.new
-a[:cflags] = ["-std=c++11"]
-
-b = Build::Environment.new(a, {})
-b[:cflags] = ["-stdlib=libc++"]
-b[:rcflags] = lambda{cflags}
-
-b.flatten
-```
-
-### Key Logic
-
-When flattening an environment:
-
-  - String values overwrite each other.
-  - Array keys are concatenated.
-  - Symbols are redirected (i.e. refer to another key-value)
+  - [Getting Started](https://ioquatix.github.io/build-environmentguides/getting-started/index) - This guide explains how to get started with `build-environment`, a nested key-value data structure for organising build configurations.
 
 ## Releases
 
-There are no documented releases.
+Please see the [project releases](https://ioquatix.github.io/build-environmentreleases/index) for all releases.
+
+### Unreleased
 
 ## Contributing
 
