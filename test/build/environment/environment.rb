@@ -1,52 +1,39 @@
-# Copyright, 2012, by Samuel G. D. Williams. <http://www.codeotaku.com>
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+# frozen_string_literal: true
 
-require 'build/environment'
+# Released under the MIT License.
+# Copyright, 2015-2026, by Samuel Williams.
 
-RSpec.describe Build::Environment do
-	context '#to_s' do
+require "build/environment"
+
+describe Build::Environment do
+	let(:environment) {subject.new}
+	
+	with "#to_s" do
 		it "should generate empty string" do
-			expect(subject.to_s).to be == "#<Build::Environment {}>"
+			expect(environment.to_s).to be == "#<Build::Environment {}>"
 		end
 		
 		it "should show update proc" do
 			environment = Build::Environment.new do
 			end
 			
-			expect(environment.to_s).to be =~ /environment_spec.rb/
+			expect(environment.to_s).to be(:include?, __FILE__)
 		end
 	end
 	
-	context '#include?' do
+	with "#include?" do
 		it "should not include anything" do
-			expect(subject.include?(:thing)).to be_falsey
+			expect(environment.include?(:thing)).to be_falsey
 		end
 		
 		it "should include key" do
-			subject[:thing] = 42
-			expect(subject.include?(:thing)).to be_truthy
+			environment[:thing] = 42
+			expect(environment.include?(:thing)).to be_truthy
 		end
 		
 		it "should include key if parent includes key" do
-			subject[:thing] = 42
-			child = Build::Environment.new(subject)
+			environment[:thing] = 42
+			child = Build::Environment.new(environment)
 			expect(child.include?(:thing)).to be_truthy
 		end
 	end
@@ -57,7 +44,7 @@ RSpec.describe Build::Environment do
 		
 		b = Build::Environment.new(a)
 		b[:cflags] = ["-stdlib=libc++"]
-		b[:rcflags] = lambda {cflags.reverse}
+		b[:rcflags] = lambda{cflags.reverse}
 		
 		expect(b.evaluate.to_h).to be == {
 			:cflags => ["-std=c++11", "-stdlib=libc++"],
@@ -82,18 +69,18 @@ RSpec.describe Build::Environment do
 		expect(b.to_h.keys.sort).to be == [:cflags, :sdk]
 		
 		expect(Build::Environment::System::convert_to_shell(b.evaluate)).to be == {
-			'SDK' => "bob-2.8",
-			'CFLAGS' => "-sdk=bob-2.8"
+			"SDK" => "bob-2.8",
+			"CFLAGS" => "-sdk=bob-2.8"
 		}
 		
 		expect(c.evaluate[:cflags]).to be == %W{-sdk=bob-2.8 -pipe}
 	end
 	
 	it "should combine environments" do
-		a = Build::Environment.new(nil, {:name => 'a'})
-		b = Build::Environment.new(a, {:name => 'b'})
-		c = Build::Environment.new(nil, {:name => 'c'})
-		d = Build::Environment.new(c, {:name => 'd'})
+		a = Build::Environment.new(nil, {:name => "a"})
+		b = Build::Environment.new(a, {:name => "b"})
+		c = Build::Environment.new(nil, {:name => "c"})
+		d = Build::Environment.new(c, {:name => "d"})
 		
 		top = Build::Environment.combine(b, d)
 		

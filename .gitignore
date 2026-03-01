@@ -1,4 +1,7 @@
-/Gemfile.lock
-/.rspec_status
+/agents.md
+/.context
+/.bundle
 /pkg
-/.covered*
+/gems.locked
+/.covered.db
+/external
